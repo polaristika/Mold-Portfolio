@@ -28,6 +28,14 @@
             background-color: var(--bg);
             color: var(--text-primary);
             line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Make media elements responsive and avoid overflow */
+        img, video {
+            max-width: 100%;
+            height: auto;
+            display: block;
         }
 
         /* Navigation */
@@ -305,11 +313,11 @@
 
         /* About Section */
         #about {
-            min-height: 100vh;
+            min-height: auto;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 6rem 2rem;
+            padding: 3rem 2rem;
         }
 
         .about-content {
@@ -383,7 +391,7 @@
 
         .portfolio-items-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2.5rem;
         }
 
@@ -463,11 +471,11 @@
 
         /* Contact Section */
         #contact {
-            min-height: 80vh;
+            min-height: auto;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 6rem 2rem;
+            padding: 3rem 2rem;
         }
 
         .contact-content {
@@ -621,6 +629,15 @@
                 max-height: 400px;
             }
 
+            .portfolio-items-container {
+                grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            }
+
+            .portfolio-media {
+                aspect-ratio: auto;
+                height: auto;
+            }
+
             .section-title {
                 font-size: 2rem;
             }
@@ -691,23 +708,6 @@
         </div>
     </section>
 
-    <!-- About Section -->
-    <section id="about">
-        <div class="about-content">
-            <h2 class="section-title">About</h2>
-            
-            <p class="about-text">
-                Specialized R6 animator with 6+ years of professional experience. Contributed animations to DIVE!! and Dye Of Deaf—games with 9.1M+ combined visits. Expert in creating high-quality R6 animations that engage players and bring games to life.
-            </p>
-
-            <ul class="about-list">
-                <li>Expert in R6 animations</li>
-                <li>Proven track record with major Roblox games</li>
-                <li>Delivering professional-quality animation production</li>
-            </ul>
-        </div>
-    </section>
-
     <!-- Portfolio Section -->
     <section id="portfolio">
         <div class="portfolio-grid">
@@ -747,6 +747,23 @@
         </div>
     </section>
 
+    <!-- About Section -->
+    <section id="about">
+        <div class="about-content">
+            <h2 class="section-title">About</h2>
+            
+            <p class="about-text">
+                Specialized R6 animator with 6+ years of professional experience. Contributed animations to DIVE!! and Dye Of Deaf—games with 9.1M+ combined visits. Expert in creating high-quality R6 animations that engage players and bring games to life.
+            </p>
+
+            <ul class="about-list">
+                <li>Expert in R6 animations</li>
+                <li>Proven track record with major Roblox games</li>
+                <li>Delivering professional-quality animation production</li>
+            </ul>
+        </div>
+    </section>
+
     <!-- Contact Section -->
     <section id="contact">
         <div class="contact-content">
@@ -755,10 +772,8 @@
                 Ready to discuss your next animation project? Let's create something extraordinary together.
             </p>
             <div class="contact-buttons">
-                <a href="mailto:contact@moldanimator.com" class="contact-button">Send Email</a>
-                <a href="https://discord.com/users/toasterion" target="_blank" class="contact-button">Discord</a>
+                <a href="#" id="discord-copy" class="contact-button" data-username="toasterion">Discord</a>
             </div>
-            <p class="contact-email">contact@moldanimator.com</p>
         </div>
     </section>
 
@@ -778,6 +793,36 @@
                 }
             });
         });
+
+        // Discord copy-to-clipboard behavior
+        (function() {
+            const discordBtn = document.getElementById('discord-copy');
+            if (!discordBtn) return;
+
+            // Provide the actual display text and username to copy
+            const username = discordBtn.dataset.username || 'toasterion';
+            const originalText = discordBtn.textContent;
+
+            discordBtn.addEventListener('click', async function(e) {
+                e.preventDefault();
+                // Copy to clipboard
+                try {
+                    await navigator.clipboard.writeText(username);
+                    discordBtn.textContent = 'Copied!';
+                } catch (err) {
+                    // Fallback for older browsers
+                    const input = document.createElement('input');
+                    input.value = username;
+                    document.body.appendChild(input);
+                    input.select();
+                    try { document.execCommand('copy'); discordBtn.textContent = 'Copied!'; } catch(e) { alert('Copy failed - username: ' + username); }
+                    document.body.removeChild(input);
+                }
+
+                // Briefly show copied state then revert
+                setTimeout(() => { discordBtn.textContent = originalText; }, 1500);
+            });
+        })();
     </script>
 </body>
 </html>

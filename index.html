@@ -701,7 +701,8 @@
         <div class="nav-brand">Mold</div>
         <ul class="nav-links">
             <li><a href="#hero">Home</a></li>
-            <li><a href="#portfolio">Work</a></li>
+            <li><a href="#his-work">Work</a></li>
+            <li><a href="#portfolio">Projects</a></li>
             <li><a href="#contact">Contact</a></li>
         </ul>
     </nav>
@@ -734,7 +735,7 @@
             <!-- Right Side -->
             <div class="hero-right">
                 <div class="video-container">
-                    <video autoplay muted loop playsinline>
+                    <video autoplay muted loop playsinline preload="auto" poster="transition/Frame1.png">
                         <source src="best-work.mp4" type="video/mp4">
                         Your browser does not support the video tag.
                     </video>
@@ -762,7 +763,7 @@
                     <span class="portfolio-featured">Partner</span>
                     <h3 class="portfolio-title">Animation</h3>
                     <div class="portfolio-media">
-                        <video autoplay controls preload="none" playsinline poster="transition/Frame1.png" muted loop>
+                        <video autoplay controls preload="metadata" playsinline poster="transition/Frame1.png" muted loop>
                             <source src="p_1.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
@@ -775,7 +776,7 @@
                     <span class="portfolio-featured">Partner</span>
                     <h3 class="portfolio-title">Project 2</h3>
                     <div class="portfolio-media">
-                        <video autoplay controls preload="none" playsinline poster="transition/Frame10.png" muted loop>
+                        <video autoplay controls preload="metadata" playsinline poster="transition/Frame10.png" muted loop>
                             <source src="p_2.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
@@ -788,7 +789,7 @@
                     <span class="portfolio-featured">Partner</span>
                     <h3 class="portfolio-title">Project 3</h3>
                     <div class="portfolio-media">
-                        <video autoplay controls preload="none" playsinline poster="transition/Frame20.png" muted loop>
+                        <video autoplay controls preload="metadata" playsinline poster="transition/Frame20.png" muted loop>
                             <source src="p_3.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
@@ -811,7 +812,7 @@
                     <h3 class="portfolio-title">DIVE!!</h3>
                     <a href="https://www.roblox.com/games/102464178326906/DIVE-v0-2a" target="_blank" style="text-decoration: none;">
                         <div class="portfolio-media">
-                            <img src="dive.webp" alt="DIVE!! game">
+                            <img src="dive.webp" alt="DIVE!! game" decoding="async">
                         </div>
                     </a>
                     <p class="portfolio-description">
@@ -826,7 +827,7 @@
                     <h3 class="portfolio-title">Dye Of Deaf</h3>
                     <a href="https://www.roblox.com/games/108495587336269/Dye-Of-Deaf" target="_blank" style="text-decoration: none;">
                         <div class="portfolio-media">
-                            <img src="Dye of Deaf.webp" alt="Dye Of Deaf game">
+                            <img src="Dye of Deaf.webp" alt="Dye Of Deaf game" decoding="async">
                         </div>
                     </a>
                     <p class="portfolio-description">
@@ -839,13 +840,13 @@
                 <div class="portfolio-item">
                     <span class="portfolio-featured">Featured</span>
                     <h3 class="portfolio-title">Containment Breach</h3>
-                    <a href="https://www.roblox.com/games/121775408285719/an-untitled-game" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
+                    <a href="https://www.roblox.com/games/646203012/Containment-Breach" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
                         <div class="portfolio-media">
-                            <img src="fnaf1.webp" alt="An Untitled Game thumbnail" loading="lazy" decoding="async">
+                            <img src="fnaf1.webp" alt="Containment Breach thumbnail" decoding="async">
                         </div>
                     </a>
                     <p class="portfolio-description">
-                        Contributed R6 animations for this project. <a href="https://www.roblox.com/games/121775408285719/an-untitled-game" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: none; font-weight: 600;">Play on Roblox →</a>
+                        Contributed R6 animations for this project. <a href="https://www.roblox.com/games/646203012/Containment-Breach" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: none; font-weight: 600;">Play on Roblox →</a>
                     </p>
                 </div>
             </div>
@@ -888,6 +889,14 @@
     </footer>
 
     <script>
+        // Register service worker for caching (improves reload performance)
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').then(reg => {
+                // optional: listen for updates
+                reg.addEventListener && reg.addEventListener('updatefound', () => {});
+            }).catch(() => {});
+        }
+
         // Smooth scroll navigation
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
@@ -930,63 +939,79 @@
         })();
 
         // Hover autoplay for His Work videos (muted) and click-to-toggle-unmute
-        // Generate poster images from the first frame of each MP4
+        // Defer heavy poster capture, use lazy images, and pause videos that are off-screen
         (function() {
             const hisVideos = document.querySelectorAll('#his-work .portfolio-media video');
+
+            // IntersectionObserver to pause videos when offscreen (saves CPU while scrolling)
+            const io = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const vid = entry.target;
+                    if (entry.intersectionRatio > 0.25) {
+                        vid.play().catch(() => {});
+                    } else {
+                        // pause when mostly off-screen
+                        vid.pause();
+                    }
+                });
+            }, { threshold: [0, 0.25, 0.5] });
+
             hisVideos.forEach(v => {
                 v.preload = 'metadata';
 
-                function captureFrame() {
-                    try {
-                        const w = v.videoWidth || 640;
-                        const h = v.videoHeight || 360;
-                        const canvas = document.createElement('canvas');
-                        canvas.width = w;
-                        canvas.height = h;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(v, 0, 0, w, h);
-                        const dataUrl = canvas.toDataURL('image/png');
-                        v.setAttribute('poster', dataUrl);
-                        v.currentTime = 0;
-                    } catch (e) {
-                        // ignore failures (CORS or unsupported)
-                    }
-                }
+                // If a poster already exists (from HTML), skip expensive frame capture.
+                const posterAttr = v.getAttribute('poster');
+                if (!posterAttr) {
+                    // Defer capture work until the browser is idle to avoid jank
+                    const tryCapture = () => {
+                        try {
+                            v.currentTime = 0.05;
+                        } catch (e) {}
+                        const captureFrame = () => {
+                            try {
+                                const w = v.videoWidth || 640;
+                                const h = v.videoHeight || 360;
+                                const canvas = document.createElement('canvas');
+                                canvas.width = w;
+                                canvas.height = h;
+                                const ctx = canvas.getContext('2d');
+                                ctx.drawImage(v, 0, 0, w, h);
+                                const dataUrl = canvas.toDataURL('image/png');
+                                v.setAttribute('poster', dataUrl);
+                                v.currentTime = 0;
+                            } catch (e) {
+                                // ignore failures (CORS or unsupported)
+                            }
+                        };
 
-                const attemptCapture = () => {
-                    try {
-                        v.currentTime = 0.05;
-                    } catch (e) {
-                        // some browsers throw if seeking too early
-                    }
-                };
+                        const onSeeked = function handler() { captureFrame(); v.removeEventListener('seeked', handler); };
+                        if (v.readyState >= 2 && v.videoWidth) {
+                            v.addEventListener('seeked', onSeeked);
+                        } else {
+                            v.addEventListener('loadedmetadata', function() { v.addEventListener('seeked', onSeeked); });
+                        }
+                    };
 
-                if (v.readyState >= 2 && v.videoWidth) {
-                    attemptCapture();
-                    v.addEventListener('seeked', function handler() { captureFrame(); v.removeEventListener('seeked', handler); });
-                } else {
-                    v.addEventListener('loadedmetadata', function() {
-                        attemptCapture();
-                        v.addEventListener('seeked', function handler() { captureFrame(); v.removeEventListener('seeked', handler); });
-                    });
+                    if ('requestIdleCallback' in window) requestIdleCallback(tryCapture, { timeout: 2000 });
+                    else setTimeout(tryCapture, 1000);
                 }
 
                 // Ensure muted + autoplay for browsers
                 v.muted = true;
                 v.autoplay = true;
                 v.loop = true;
-                // Try to start playback (some browsers require interaction but muted autoplay usually works)
                 v.play().catch(() => {});
 
                 v.addEventListener('mouseenter', () => { v.play().catch(() => {}); });
 
-                // Keep videos playing after hover (do not pause on mouseleave)
-
-                // Click toggles mute/unmute; do not pause when muting so playback remains continuous
+                // Click toggles mute/unmute; keep playback continuous
                 v.addEventListener('click', () => {
-                    if (v.muted) { v.muted = false; v.play().catch(() => {}); }
-                    else { v.muted = true; }
+                    v.muted = !v.muted;
+                    if (!v.muted) v.play().catch(() => {});
                 });
+
+                // Observe visibility
+                io.observe(v);
             });
         })();
     </script>

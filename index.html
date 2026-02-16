@@ -288,27 +288,62 @@
             font-size: 0.75rem;
             color: var(--text-secondary);
         }
-            display: inline-block;
-            padding: 0.9rem 2.5rem;
-            background: var(--accent);
-            color: #0f0f0f;
+        
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            position: relative;
+            padding: 0.35rem 0.75rem;
+            background: linear-gradient(90deg, #00c0e2 0%, #00bcd4 60%);
+            color: #e9fbff;
             text-decoration: none;
-            border-radius: 6px;
-            font-weight: 600;
+            border-radius: 8px;
+            font-weight: 500;
             border: none;
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1rem;
+            transition: transform 0.16s ease, box-shadow 0.16s ease, opacity 0.16s ease;
+            font-size: 0.95rem;
+            box-shadow: 0 6px 10px rgba(0,217,255,0.08);
+            overflow: hidden;
+            -webkit-font-smoothing:antialiased;
+            width: auto;
+            white-space: nowrap;
+            max-width: 220px;
+            justify-content: center;
         }
 
-        .cta-button:hover {
-            background: rgba(0, 217, 255, 0.8);
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0, 217, 255, 0.3);
+        /* Animated sheen */
+        .cta-button::after {
+            content: '';
+            position: absolute;
+            top: -40%;
+            left: -30%;
+            width: 60%;
+            height: 180%;
+            background: linear-gradient(120deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.22) 50%, rgba(255,255,255,0.06) 100%);
+            transform: rotate(25deg) translateX(-120%);
+            transition: transform 0.7s cubic-bezier(.2,.9,.3,1);
+            pointer-events: none;
         }
 
-        .cta-button:active {
-            transform: translateY(-1px);
+        .cta-button:hover { transform: translateY(-3px); box-shadow: 0 14px 38px rgba(0,217,255,0.14); }
+        .cta-button:hover::after { transform: rotate(25deg) translateX(20%); }
+
+        /* Subtle pulse animation to draw attention */
+        @keyframes ctaPulse {
+            0% { box-shadow: 0 6px 18px rgba(0,217,255,0.06); }
+            50% { box-shadow: 0 12px 28px rgba(0,217,255,0.10); }
+            100% { box-shadow: 0 6px 18px rgba(0,217,255,0.06); }
+        }
+
+        .cta-button.pulse { animation: ctaPulse 3.4s ease-in-out infinite; }
+
+        .cta-button:focus { outline: 3px solid rgba(0,217,255,0.12); outline-offset: 4px; }
+
+        @media (max-width: 768px) {
+            .cta-button { padding: 0.6rem 1rem; border-radius: 8px; display: inline-flex; width: auto; }
+            .hero-left { align-items: center; text-align: center; }
         }
 
         /* About Section */
@@ -443,7 +478,8 @@
         .portfolio-media video {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
+            background: #000;
             transition: transform 0.4s ease;
         }
 
@@ -467,6 +503,13 @@
             color: var(--text-secondary);
             font-size: 1rem;
             line-height: 1.7;
+        }
+
+        /* Hide text above and below videos in His Work section */
+        #his-work .portfolio-featured,
+        #his-work .portfolio-title,
+        #his-work .portfolio-description {
+            display: none;
         }
 
         /* Contact Section */
@@ -634,8 +677,8 @@
             }
 
             .portfolio-media {
-                aspect-ratio: auto;
-                height: auto;
+                aspect-ratio: 16/9;
+                max-height: 360px;
             }
 
             .section-title {
@@ -685,7 +728,7 @@
                     <li>Professional Quality Work</li>
                 </ul>
 
-                <a href="#portfolio" class="cta-button">View Work</a>
+                <a href="#portfolio" class="cta-button"><span class="cta-label">View Work</span></a>
             </div>
 
             <!-- Right Side -->
@@ -708,10 +751,58 @@
         </div>
     </section>
 
+    <!-- His Work Section -->
+    <section id="his-work">
+        <div class="portfolio-grid">
+            <h2 class="section-title">My Work</h2>
+
+            <div class="portfolio-items-container">
+                <!-- Partner Project 1 -->
+                <div class="portfolio-item">
+                    <span class="portfolio-featured">Partner</span>
+                    <h3 class="portfolio-title">Animation</h3>
+                    <div class="portfolio-media">
+                        <video autoplay controls preload="none" playsinline poster="transition/Frame1.png" muted loop>
+                            <source src="p_1.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <p class="portfolio-description">Showcase of partner work — R6 animation clip.</p>
+                </div>
+
+                <!-- Partner Project 2 -->
+                <div class="portfolio-item">
+                    <span class="portfolio-featured">Partner</span>
+                    <h3 class="portfolio-title">Project 2</h3>
+                    <div class="portfolio-media">
+                        <video autoplay controls preload="none" playsinline poster="transition/Frame10.png" muted loop>
+                            <source src="p_2.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <p class="portfolio-description">Showcase of partner work — R6 animation clip.</p>
+                </div>
+
+                <!-- Partner Project 3 -->
+                <div class="portfolio-item">
+                    <span class="portfolio-featured">Partner</span>
+                    <h3 class="portfolio-title">Project 3</h3>
+                    <div class="portfolio-media">
+                        <video autoplay controls preload="none" playsinline poster="transition/Frame20.png" muted loop>
+                            <source src="p_3.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <p class="portfolio-description">Showcase of partner work — R6 animation clip.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Portfolio Section -->
     <section id="portfolio">
         <div class="portfolio-grid">
-            <h2 class="section-title">Work</h2>
+            <h2 class="section-title">Featured Projects</h2>
             
             <div class="portfolio-items-container">
                 <!-- Featured Animation 1 -->
@@ -741,6 +832,20 @@
                     <p class="portfolio-description">
                         Professional R6 animations for DYD. Contributed to a successful project with massive player engagement.
                         <a href="https://www.roblox.com/games/108495587336269/Dye-Of-Deaf" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: 600;">Play on Roblox →</a>
+                    </p>
+                </div>
+
+                <!-- Featured Animation 3 (new) -->
+                <div class="portfolio-item">
+                    <span class="portfolio-featured">Featured</span>
+                    <h3 class="portfolio-title">An Untitled Game</h3>
+                    <a href="https://www.roblox.com/games/121775408285719/an-untitled-game" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
+                        <div class="portfolio-media">
+                            <img src="fnaf.webp" alt="An Untitled Game thumbnail" loading="lazy" decoding="async">
+                        </div>
+                    </a>
+                    <p class="portfolio-description">
+                        Contributed R6 animations for this project. <a href="https://www.roblox.com/games/121775408285719/an-untitled-game" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: none; font-weight: 600;">Play on Roblox →</a>
                     </p>
                 </div>
             </div>
@@ -821,6 +926,67 @@
 
                 // Briefly show copied state then revert
                 setTimeout(() => { discordBtn.textContent = originalText; }, 1500);
+            });
+        })();
+
+        // Hover autoplay for His Work videos (muted) and click-to-toggle-unmute
+        // Generate poster images from the first frame of each MP4
+        (function() {
+            const hisVideos = document.querySelectorAll('#his-work .portfolio-media video');
+            hisVideos.forEach(v => {
+                v.preload = 'metadata';
+
+                function captureFrame() {
+                    try {
+                        const w = v.videoWidth || 640;
+                        const h = v.videoHeight || 360;
+                        const canvas = document.createElement('canvas');
+                        canvas.width = w;
+                        canvas.height = h;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(v, 0, 0, w, h);
+                        const dataUrl = canvas.toDataURL('image/png');
+                        v.setAttribute('poster', dataUrl);
+                        v.currentTime = 0;
+                    } catch (e) {
+                        // ignore failures (CORS or unsupported)
+                    }
+                }
+
+                const attemptCapture = () => {
+                    try {
+                        v.currentTime = 0.05;
+                    } catch (e) {
+                        // some browsers throw if seeking too early
+                    }
+                };
+
+                if (v.readyState >= 2 && v.videoWidth) {
+                    attemptCapture();
+                    v.addEventListener('seeked', function handler() { captureFrame(); v.removeEventListener('seeked', handler); });
+                } else {
+                    v.addEventListener('loadedmetadata', function() {
+                        attemptCapture();
+                        v.addEventListener('seeked', function handler() { captureFrame(); v.removeEventListener('seeked', handler); });
+                    });
+                }
+
+                // Ensure muted + autoplay for browsers
+                v.muted = true;
+                v.autoplay = true;
+                v.loop = true;
+                // Try to start playback (some browsers require interaction but muted autoplay usually works)
+                v.play().catch(() => {});
+
+                v.addEventListener('mouseenter', () => { v.play().catch(() => {}); });
+
+                // Keep videos playing after hover (do not pause on mouseleave)
+
+                // Click toggles mute/unmute; do not pause when muting so playback remains continuous
+                v.addEventListener('click', () => {
+                    if (v.muted) { v.muted = false; v.play().catch(() => {}); }
+                    else { v.muted = true; }
+                });
             });
         })();
     </script>
